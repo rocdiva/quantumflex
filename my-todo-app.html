@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo App</title>
+</head>
+<body>
+    <h1>My Todo App</h1>
+    <form id="todoForm">
+        <input type="text" id="todoInput" placeholder="Enter a new todo">
+        <button type="submit">Add Todo</button>
+    </form>
+    <ul id="todoList"></ul>
+
+    <script>
+        // Part 1: Basic Todo App
+        document.getElementById('todoForm').addEventListener('submit', function(event){
+            event.preventDefault();
+
+            const newTodoText = document.getElementById('todoInput').value;
+            if (newTodoText === '') {
+                alert('Please enter a todo!');
+                return;
+            }
+
+            const listItem = document.createElement('li');
+            listItem.textContent = newTodoText;
+
+            // Mark as completed
+            listItem.addEventListener('click', function(){
+                listItem.style.textDecoration = 'line-through';
+            });
+
+            // Remove todo
+            listItem.addEventListener('dblclick', function(){
+                listItem.remove();
+                saveTodos();
+            });
+
+            document.getElementById('todoList').appendChild(listItem);
+            saveTodos();
+            document.getElementById('todoInput').value = '';
+        });
+
+        // Part 2: Local Storage
+        function saveTodos() {
+            const todos = [];
+            const todoListItems = document.querySelectorAll('#todoList li');
+            todoListItems.forEach(function(item){
+                todos.push(item.textContent);
+            });
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        function loadTodos() {
+            const todos = JSON.parse(localStorage.getItem('todos'));
+            if (todos) {
+                todos.forEach(function(todo){
+                    const listItem = document.createElement('li');
+                    listItem.textContent = todo;
+
+                    listItem.addEventListener('click', function(){
+                        listItem.style.textDecoration = 'line-through';
+                    });
+
+                    listItem.addEventListener('dblclick', function(){
+                        listItem.remove();
+                        saveTodos();
+                    });
+
+                    document.getElementById('todoList').appendChild(listItem);
+                });
+            }
+        }
+
+        // Load todos from local storage on page load
+        loadTodos();
+    </script>
+</body>
+</html>
+
